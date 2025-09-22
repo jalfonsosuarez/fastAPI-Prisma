@@ -4,6 +4,8 @@ from prisma import Prisma
 from .models.user import User
 from uuid import UUID
 from datetime import datetime
+from  utils.encrypt import get_password_hash
+
 
 userAPI = APIRouter(
     tags=['Users']
@@ -32,13 +34,14 @@ async def get_user(id_user: UUID):
 
 @userAPI.post("/users")
 async def save_user(user: User):
+    password = get_password_hash(str(user.password))
     await db.connect()
     post = await db.user.create(
         data={
             "fullname": str(user.fullname),
             "email": str(user.email),
             "role": str(user.role),
-            "password": str(user.password),
+            "password": password,
             "is_active": bool(user.is_active)
         }
     )
