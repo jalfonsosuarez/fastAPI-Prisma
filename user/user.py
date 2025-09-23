@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import asyncio
 from prisma import Prisma
-from .models.user import User
+from .models.user import User, CreateUser
 from uuid import UUID
 from datetime import datetime
 from  utils.encrypt import get_password_hash
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
 
 userAPI = APIRouter(
     tags=['Users']
@@ -14,7 +16,7 @@ userAPI = APIRouter(
 db = Prisma()
 
 @userAPI.get("/users")
-async def get_all_users():
+async def get_all_users(token: str= Depends(oauth2_scheme)):
     await db.connect()
     users = await db.user.find_many()
     for user in users:
@@ -24,7 +26,7 @@ async def get_all_users():
     return users
 
 @userAPI.get("/users/{id_user}")
-async def get_user(id_user: UUID):
+async def get_user(id_user: UUID, token: str= Depends(oauth2_scheme)):
     await db.connect()
     user = await db.user.find_first(where={'id': str(id_user)})
     await db.disconnect()
@@ -33,7 +35,7 @@ async def get_user(id_user: UUID):
     return user
 
 @userAPI.post("/users")
-async def save_user(user: User):
+async def save_user(user: User, token: str= Depends(oauth2_scheme)):
     password = get_password_hash(str(user.password))
     await db.connect()
     post = await db.user.create(
@@ -50,7 +52,7 @@ async def save_user(user: User):
     return post
 
 @userAPI.put("/users/{id_user}")
-async def update_user(id_user: UUID, data: User):
+async def update_user(id_user: UUID, data: User, token: str= Depends(oauth2_scheme)):
     await db.connect()
     update_data = data.model_dump(exclude_unset=True)
     user = await db.user.update(
@@ -65,7 +67,7 @@ async def update_user(id_user: UUID, data: User):
     return user
 
 @userAPI.delete("/users/{id_user}")
-async def delete_user(id_user: UUID):
+async def delete_user(id_user: UUID,  token: str= Depends(oauth2_scheme)):
     await db.connect()
     user = await db.user.update(
         where={"id": str(id_user)},
@@ -80,3 +82,21 @@ async def delete_user(id_user: UUID):
     if hasattr(user, 'password'):
         user.password = '****'
     return user
+
+@userAPI.post("/create_user")
+async def create_user(user: CreateUser):
+    password = get_password_hash(str(user.password))
+    await db.connect()
+    post = await db.user.create(
+        data={
+            "fullname": str(user.fullname),
+            "email": str(user.email),
+            "role": "USER",
+            "password": password,
+            "is_active": True
+        }
+    )
+    post.password = '****'
+    await db.disconnect()
+    return post
+

@@ -14,3 +14,16 @@ class User(BaseModel):
     createdAt: datetime = field(default_factory=datetime.now)
     updatedAt: Optional[datetime] = None
     deletedAt: Optional[datetime] = None
+
+class CreateUser(BaseModel):
+    fullname: Optional[str] = ""
+    email: Optional[str] = ""
+    password: Optional[str] = ""
+
+
+class LoggedUser(BaseModel):
+    email: str
+    id: UUID
+    role: str
+    fullname: str
+    
