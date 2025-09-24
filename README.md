@@ -22,6 +22,15 @@
    uvicorn main:app --reload
    ````
 
-Documentación swagger:
+## Documentación swagger:
 
 [localhost:8000/docs](http://localhost:8000/docs)
+
+## Usuarios para pruebas:
+
+- Admin:
+  - username: admin@mail.com
+  - password: A123456b
+- User:
+  - username: user@mail.com
+  - password: A123456b
