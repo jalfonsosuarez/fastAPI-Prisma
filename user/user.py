@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-import asyncio
+from fastapi.security import OAuth2PasswordBearer
 from prisma import Prisma
 
 from utils.auth_utils import is_admin
