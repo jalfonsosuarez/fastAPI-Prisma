@@ -1,4 +1,5 @@
-from jose import jwt
+# from jose import jwt
+import jwt
 from jose.exceptions import JWTError
 from fastapi import HTTPException
 from datetime import datetime, timedelta, timezone
@@ -44,8 +45,8 @@ def decode_token(token: str):
         dict: datos del usuario que estaban el el token.
     """
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM) # type: ignore
         return payload
     except JWTError as e:
-        raise HTTPException(status_code=401, detail=f"Token no válido o expirado: {e}")
+        raise HTTPException(status_code=401, detail=f"Token no válido o expirado!!!!: {e}")
     

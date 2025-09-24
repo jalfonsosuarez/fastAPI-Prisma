@@ -2,10 +2,12 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import asyncio
 from prisma import Prisma
+
+from utils.auth_utils import is_admin
 from .models.user import User, CreateUser
 from uuid import UUID
 from datetime import datetime
-from  utils.encrypt import get_password_hash
+from utils.encrypt import get_password_hash
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
 
@@ -16,7 +18,10 @@ userAPI = APIRouter(
 db = Prisma()
 
 @userAPI.get("/users")
-async def get_all_users(token: str= Depends(oauth2_scheme)):
+async def get_all_users(token: str = Depends(oauth2_scheme)):
+    if not is_admin(token):
+        raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
+    
     await db.connect()
     users = await db.user.find_many()
     for user in users:
@@ -27,6 +32,9 @@ async def get_all_users(token: str= Depends(oauth2_scheme)):
 
 @userAPI.get("/users/{id_user}")
 async def get_user(id_user: UUID, token: str= Depends(oauth2_scheme)):
+    if not is_admin(token):
+        raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
+    
     await db.connect()
     user = await db.user.find_first(where={'id': str(id_user)})
     await db.disconnect()
@@ -36,6 +44,9 @@ async def get_user(id_user: UUID, token: str= Depends(oauth2_scheme)):
 
 @userAPI.post("/users")
 async def save_user(user: User, token: str= Depends(oauth2_scheme)):
+    if not is_admin(token):
+        raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
+    
     password = get_password_hash(str(user.password))
     await db.connect()
     post = await db.user.create(
@@ -53,6 +64,9 @@ async def save_user(user: User, token: str= Depends(oauth2_scheme)):
 
 @userAPI.put("/users/{id_user}")
 async def update_user(id_user: UUID, data: User, token: str= Depends(oauth2_scheme)):
+    if not is_admin(token):
+        raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
+    
     await db.connect()
     update_data = data.model_dump(exclude_unset=True)
     user = await db.user.update(
@@ -68,6 +82,9 @@ async def update_user(id_user: UUID, data: User, token: str= Depends(oauth2_sche
 
 @userAPI.delete("/users/{id_user}")
 async def delete_user(id_user: UUID,  token: str= Depends(oauth2_scheme)):
+    if not is_admin(token):
+        raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
+    
     await db.connect()
     user = await db.user.update(
         where={"id": str(id_user)},
