@@ -33,7 +33,7 @@ async def authenticate_user(email: str, password: str):
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> LoggedUser:
     payload = decode_token(token)
-    user = payload.get("sub")
+    user = LoggedUser(**payload.get("sub"))
     if user is None:
         raise HTTPException(status_code=401, detail="Error en datos de acceso.")
     return user
