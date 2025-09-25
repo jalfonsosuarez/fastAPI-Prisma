@@ -14,11 +14,11 @@
    pip install -r requirements.txt
    ```
 5. Copiar .env.template y rellenar los valores de las variables de entorno:
-   ´´´
+   ```
    SECRET_KEY = 
    ALGORITHM = HS256
    ACCESS_TOKEN_EXPIRE_MINUTES = 
-   ´´´
+   ```
 6. Ejecutar prisma para crear la base de datos:
    ```
    prisma db push
