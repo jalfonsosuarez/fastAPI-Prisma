@@ -19,11 +19,11 @@
    ALGORITHM = HS256
    ACCESS_TOKEN_EXPIRE_MINUTES = 
    ´´´
-5. Ejecutar prisma para crear la base de datos:
+6. Ejecutar prisma para crear la base de datos:
    ```
    prisma db push
    ```
-6. Ejecutar el proyecto:
+7. Ejecutar el proyecto:
    ```
    uvicorn main:app --reload
    ````
