@@ -4,7 +4,7 @@ from dataclasses import field
 from typing import Optional
 from uuid import UUID, uuid4
 
-class User(BaseModel):
+class Category_Model(BaseModel):
     id: Optional[UUID] = field(default_factory=uuid4)
     description: Optional[str] = ""
     is_active: Optional[bool] = True

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from user.user import userAPI
 from auth.auth import authAPI
+from categories.category import categoryAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 
 app = FastAPI(
@@ -22,3 +23,4 @@ def read_root():
 
 app.include_router(userAPI)
 app.include_router(authAPI)
+app.include_router(categoryAPI)
