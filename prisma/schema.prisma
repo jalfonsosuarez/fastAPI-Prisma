@@ -21,3 +21,12 @@ model User {
     updatedAt DateTime? @updatedAt
     deletedAt DateTime?
 }
+
+model Category {
+    id          String    @id @default(uuid())
+    description String
+    is_active   Boolean?
+    createdAt   DateTime? @default(now())
+    updatedAt   DateTime? @updatedAt
+    deletedAt   DateTime?
+}
