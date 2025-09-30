@@ -16,7 +16,7 @@ userAPI = APIRouter(
 
 db = Prisma()
 
-@userAPI.get("/users")
+@userAPI.get("/users", summary="Get all users.")
 async def get_all_users(token: str = Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -29,7 +29,7 @@ async def get_all_users(token: str = Depends(oauth2_scheme)):
     await db.disconnect()
     return users
 
-@userAPI.get("/users/{id_user}")
+@userAPI.get("/users/{id_user}", summary="Get user by id.")
 async def get_user(id_user: UUID, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -41,7 +41,7 @@ async def get_user(id_user: UUID, token: str= Depends(oauth2_scheme)):
         user.password = '****'
     return user
 
-@userAPI.post("/users")
+@userAPI.post("/users", summary="Create new user.")
 async def save_user(user: User, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -61,7 +61,7 @@ async def save_user(user: User, token: str= Depends(oauth2_scheme)):
     await db.disconnect()
     return post
 
-@userAPI.put("/users/{id_user}")
+@userAPI.put("/users/{id_user}", summary="Update user.")
 async def update_user(id_user: UUID, data: User, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -79,7 +79,7 @@ async def update_user(id_user: UUID, data: User, token: str= Depends(oauth2_sche
         user.password = '****'
     return user
 
-@userAPI.delete("/users/{id_user}")
+@userAPI.delete("/users/{id_user}", summary="Delete user.")
 async def delete_user(id_user: UUID,  token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -99,7 +99,7 @@ async def delete_user(id_user: UUID,  token: str= Depends(oauth2_scheme)):
         user.password = '****'
     return user
 
-@userAPI.post("/create_user")
+@userAPI.post("/create_user", summary="Create external user.")
 async def create_user(user: CreateUser):
     password = get_password_hash(str(user.password))
     await db.connect()

@@ -15,21 +15,21 @@ productAPI = APIRouter(
 
 db = Prisma()
 
-@productAPI.get("/products")
+@productAPI.get("/products", summary="Get all products.")
 async def get_all_products(token: str = Depends(oauth2_scheme)):
     await db.connect()
     categories = await db.product.find_many(where={'is_active': True})
     await db.disconnect()
     return categories
 
-@productAPI.get("/products/{id_product}")
+@productAPI.get("/products/{id_product}", summary="Get product by id.")
 async def get_user(id_product: UUID, token: str= Depends(oauth2_scheme)):
     await db.connect()
     product = await db.product.find_first(where={'id': str(id_product)})
     await db.disconnect()
     return product
 
-@productAPI.post("/products")
+@productAPI.post("/products", summary="Create new product.")
 async def save_category(product: Product_Model, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -46,7 +46,7 @@ async def save_category(product: Product_Model, token: str= Depends(oauth2_schem
     await db.disconnect()
     return post
 
-@productAPI.put("/products/{id_category}")
+@productAPI.put("/products/{id_category}", summary="Update product.")
 async def update_user(id_product: UUID, data: Product_Model, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -62,7 +62,7 @@ async def update_user(id_product: UUID, data: Product_Model, token: str= Depends
         raise HTTPException(status_code=404, detail="Product not found")
     return product
 
-@productAPI.delete("/products/{id_product}")
+@productAPI.delete("/products/{id_product}", summary="Delete product.")
 async def delete_user(id_product: UUID,  token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")

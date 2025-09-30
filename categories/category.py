@@ -16,21 +16,21 @@ categoryAPI = APIRouter(
 
 db = Prisma()
 
-@categoryAPI.get("/categories")
+@categoryAPI.get("/categories", summary="Get all categories.")
 async def get_all_categories(token: str = Depends(oauth2_scheme)):
     await db.connect()
     categories = await db.category.find_many(where={'is_active': True})
     await db.disconnect()
     return categories
 
-@categoryAPI.get("/categories/{id_category}")
+@categoryAPI.get("/categories/{id_category}", summary="Get category by id.")
 async def get_user(id_category: UUID, token: str= Depends(oauth2_scheme)):
     await db.connect()
     category = await db.category.find_first(where={'id': str(id_category)})
     await db.disconnect()
     return category
 
-@categoryAPI.post("/categories")
+@categoryAPI.post("/categories", summary="Create new category.")
 async def save_category(category: Category_Model, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -44,7 +44,7 @@ async def save_category(category: Category_Model, token: str= Depends(oauth2_sch
     await db.disconnect()
     return post
 
-@categoryAPI.put("/categories/{id_category}")
+@categoryAPI.put("/categories/{id_category}", summary="Update category.")
 async def update_user(id_category: UUID, data: Category_Model, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
@@ -60,7 +60,7 @@ async def update_user(id_category: UUID, data: Category_Model, token: str= Depen
         raise HTTPException(status_code=404, detail="Category not found")
     return category
 
-@categoryAPI.delete("/category/{id_category}")
+@categoryAPI.delete("/category/{id_category}", summary="Delete category.")
 async def delete_user(id_category: UUID,  token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
