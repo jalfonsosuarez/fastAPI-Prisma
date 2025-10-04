@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from prisma import Prisma
 
 from utils.auth_utils import is_admin
-from .models.product_model import Product_Model
+from .models.product_model import Product_Model, Product_Model_Update
 from uuid import UUID
 from datetime import datetime
 
@@ -23,14 +23,14 @@ async def get_all_products(token: str = Depends(oauth2_scheme)):
     return categories
 
 @productAPI.get("/products/{id_product}", summary="Get product by id.")
-async def get_user(id_product: UUID, token: str= Depends(oauth2_scheme)):
+async def get_product(id_product: UUID, token: str= Depends(oauth2_scheme)):
     await db.connect()
     product = await db.product.find_first(where={'id': str(id_product)})
     await db.disconnect()
     return product
 
 @productAPI.post("/products", summary="Create new product.")
-async def save_category(product: Product_Model, token: str= Depends(oauth2_scheme)):
+async def save_product(product: Product_Model, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
     
@@ -46,13 +46,14 @@ async def save_category(product: Product_Model, token: str= Depends(oauth2_schem
     await db.disconnect()
     return post
 
-@productAPI.put("/products/{id_category}", summary="Update product.")
-async def update_user(id_product: UUID, data: Product_Model, token: str= Depends(oauth2_scheme)):
+@productAPI.put("/products/{id_product}", summary="Update product.")
+async def update_product(id_product: UUID, data: Product_Model_Update, token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
     
     await db.connect()
     update_data = data.model_dump(exclude_unset=True)
+    update_data["id_category"] = str(update_data["id_category"])
     product = await db.product.update(
         where={"id": str(id_product)},
         data=update_data # type: ignore
@@ -63,7 +64,7 @@ async def update_user(id_product: UUID, data: Product_Model, token: str= Depends
     return product
 
 @productAPI.delete("/products/{id_product}", summary="Delete product.")
-async def delete_user(id_product: UUID,  token: str= Depends(oauth2_scheme)):
+async def delete_product(id_product: UUID,  token: str= Depends(oauth2_scheme)):
     if not is_admin(token):
         raise HTTPException(status_code=401, detail="No tienes permisos para acceder.")
     
