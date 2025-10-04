@@ -1,4 +1,15 @@
-# CRUD básico de usuarios en Python 3 con FasAPI, Prisma y SQLite
+# CRUD básico de usuarios en Python 3 con FastAPI, Prisma y SQLite
+### Incluye CRUD de Categorías y de Productos.
+
+## Tecnologías usadas:
+* Python 3 como lenguaje de programación.
+* bCrypt para encriptación de contraseñas.
+* JWT para generación y uso de Token.
+* FastAPI para manejo de rutas.
+* Prisma como ORM de base de datos.
+* SQLite como base de datos.
+
+## Instrucciones:
 
 1. Clonar el proyecto y descargarlo en tu equipo.
 2. Crear un entorno virtual en Python:
@@ -13,7 +24,7 @@
    ```
    pip install -r requirements.txt
    ```
-5. Copiar .env.template y rellenar los valores de las variables de entorno:
+5. Copiar .env_template como .env y rellenar los valores de las variables de entorno:
    ```
    SECRET_KEY = 
    ALGORITHM = HS256
